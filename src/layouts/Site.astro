@@ -13,7 +13,7 @@ const schema=tool?{'@context':'https://schema.org','@type':'WebApplication',name
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>{title}</title><meta name="description" content={description}/><meta name="theme-color" content="#f5f7f7"/>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/><link rel="canonical" href={canonical}/>
-<link rel="alternate" hreflang="en" href={new URL(url('en',path),Astro.site).href}/><link rel="alternate" hreflang="zh-Hans" href={new URL(url('zh',path),Astro.site).href}/><link rel="alternate" hreflang="x-default" href={new URL(url('en',path),Astro.site).href}/>
+{!noindex&&<><link rel="alternate" hreflang="en" href={new URL(url('en',path),Astro.site).href}/><link rel="alternate" hreflang="zh-Hans" href={new URL(url('zh',path),Astro.site).href}/><link rel="alternate" hreflang="x-default" href={new URL(url('en',path),Astro.site).href}/></>}
 {(staging||noindex)&&<meta name="robots" content="noindex, nofollow"/>}
 <meta property="og:type" content="website"/><meta property="og:site_name" content="DotsDashes"/><meta property="og:title" content={title}/><meta property="og:description" content={description}/><meta property="og:url" content={canonical}/><meta property="og:locale" content={locale==='zh'?'zh_CN':'en_US'}/>
 {schema&&<script type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g,'\\u003c')}/>}
@@ -30,7 +30,7 @@ const schema=tool?{'@context':'https://schema.org','@type':'WebApplication',name
 <footer class="footer wrap"><a class="brand" href={home}><span class="brand-mark" aria-hidden="true">••−</span>dotsdashes.</a><span>{locale==='en'?'A little code. A clearer message.':'让点划，传递清楚的信息。'}</span><nav aria-label={locale==='zh'?'网站信息':'Site information'}><a href={url(locale,'about/')}>{t.about}</a><a href={url(locale,'privacy/')}>{t.privacy}</a><a href="https://github.com/xuyuji/morse-code-generator/issues">{t.feedback}</a></nav></footer>
 <script>
  document.querySelectorAll<HTMLDetailsElement>('.menu').forEach(menu=>{document.addEventListener('click',event=>{if(!menu.contains(event.target as Node))menu.open=false;});document.addEventListener('keydown',event=>{if(event.key==='Escape'&&menu.open){menu.open=false;menu.querySelector('summary')?.focus();}});});
- // Only retain an in-memory message through an explicitly requested language switch.
+ // Confirm before navigation discards a message; never persist user input.
  document.querySelectorAll<HTMLAnchorElement>('[data-language-link]').forEach(link=>link.addEventListener('click',event=>{const input=document.querySelector<HTMLTextAreaElement>('#message');if(input?.value&&!confirm(document.documentElement.lang.startsWith('zh')?'切换语言会清空当前输入，是否继续？':'Switching language clears your current message. Continue?'))event.preventDefault();}));
 </script>
 </body></html>
