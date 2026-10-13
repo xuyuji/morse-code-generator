@@ -1,0 +1,36 @@
+---
+import '../styles/global.css';
+import {labels,url,paths,type Locale,type Tool} from '../content/site';
+interface Props {locale:Locale;title:string;description:string;path?:string;tool?:Tool;noindex?:boolean}
+const {locale,title,description,path='',tool,noindex=false}=Astro.props;
+const t=labels[locale],home=url(locale),canonical=new URL(url(locale,path),Astro.site).href;
+const staging=import.meta.env.PUBLIC_SITE_ENV==='dev';
+const schema=tool?{'@context':'https://schema.org','@type':'WebApplication',name:title.split(' | ')[0],url:canonical,applicationCategory:'UtilitiesApplication',operatingSystem:'Any',browserRequirements:'Requires JavaScript for interactive tools',inLanguage:locale==='zh'?'zh-Hans':'en',isAccessibleForFree:true,description}:undefined;
+---
+<!doctype html>
+<html lang={locale==='zh'?'zh-Hans':'en'}>
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>{title}</title><meta name="description" content={description}/><meta name="theme-color" content="#f5f7f7"/>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"/><link rel="canonical" href={canonical}/>
+<link rel="alternate" hreflang="en" href={new URL(url('en',path),Astro.site).href}/><link rel="alternate" hreflang="zh-Hans" href={new URL(url('zh',path),Astro.site).href}/><link rel="alternate" hreflang="x-default" href={new URL(url('en',path),Astro.site).href}/>
+{(staging||noindex)&&<meta name="robots" content="noindex, nofollow"/>}
+<meta property="og:type" content="website"/><meta property="og:site_name" content="DotsDashes"/><meta property="og:title" content={title}/><meta property="og:description" content={description}/><meta property="og:url" content={canonical}/><meta property="og:locale" content={locale==='zh'?'zh_CN':'en_US'}/>
+{schema&&<script type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g,'\\u003c')}/>}
+</head>
+<body>
+<a class="skip" href="#main">{t.skip}</a>
+{staging&&<div class="dev-banner">{locale==='zh'?'开发预览 · 不参与搜索收录':'Development preview · Not indexed'}</div>}
+<header class="topbar wrap">
+<a class="brand" href={home} aria-label="DotsDashes"><span class="brand-mark" aria-hidden="true">••−</span>dots<span>dashes</span><i aria-hidden="true">.</i></a>
+<nav class="desktop-nav" aria-label={t.nav}>{(Object.keys(paths) as Tool[]).map(key=><a href={url(locale,paths[key])} aria-current={tool===key?'page':undefined}>{key==='translator'?t.home:t[key]}</a>)}</nav>
+<div class="header-actions"><a class="language" href={url(locale==='en'?'zh':'en',path)} lang={locale==='en'?'zh-Hans':'en'} data-language-link>{t.language}</a><details class="menu"><summary aria-label={t.menu}><span aria-hidden="true">☰</span></summary><nav aria-label={t.nav}>{(Object.keys(paths) as Tool[]).map(key=><a href={url(locale,paths[key])}>{key==='translator'?t.home:t[key]}</a>)}<a href={url(locale,'about/')}>{t.about}</a></nav></details></div>
+</header>
+<main id="main" class="wrap"><slot/></main>
+<footer class="footer wrap"><a class="brand" href={home}><span class="brand-mark" aria-hidden="true">••−</span>dotsdashes.</a><span>{locale==='en'?'A little code. A clearer message.':'让点划，传递清楚的信息。'}</span><nav aria-label={locale==='zh'?'网站信息':'Site information'}><a href={url(locale,'about/')}>{t.about}</a><a href={url(locale,'privacy/')}>{t.privacy}</a><a href="https://github.com/xuyuji/morse-code-generator/issues">{t.feedback}</a></nav></footer>
+<script>
+ document.querySelectorAll<HTMLDetailsElement>('.menu').forEach(menu=>{document.addEventListener('click',event=>{if(!menu.contains(event.target as Node))menu.open=false;});document.addEventListener('keydown',event=>{if(event.key==='Escape'&&menu.open){menu.open=false;menu.querySelector('summary')?.focus();}});});
+ // Only retain an in-memory message through an explicitly requested language switch.
+ document.querySelectorAll<HTMLAnchorElement>('[data-language-link]').forEach(link=>link.addEventListener('click',event=>{const input=document.querySelector<HTMLTextAreaElement>('#message');if(input?.value&&!confirm(document.documentElement.lang.startsWith('zh')?'切换语言会清空当前输入，是否继续？':'Switching language clears your current message. Continue?'))event.preventDefault();}));
+</script>
+</body></html>

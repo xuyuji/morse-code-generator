@@ -1,0 +1,11 @@
+---
+import {labels,type Locale} from '../content/site';
+const {locale,generator=false}=Astro.props as {locale:Locale;generator?:boolean};const t=labels[locale];
+---
+<details class="settings" open={generator}>
+<summary><span>{t.settings}</span><span class="settings-value" id="settings-summary">20 WPM · 600 Hz <span aria-hidden="true">⌄</span></span></summary>
+<div class="settings-body">
+<div class="setting"><label for="speed">{t.speed}</label><div class="range-row"><input type="range" id="speed" min="5" max="40" step="1" value="20"/><input id="speed-number" type="number" inputmode="numeric" min="5" max="40" step="1" value="20" aria-label={locale==='zh'?'字符速度数值':'Character speed value'}/><span>WPM</span></div><p>{t.speedHelp}</p></div>
+{generator&&<div class="setting"><label for="effective">{t.effective}</label><div class="range-row"><input type="range" id="effective" min="5" max="20" step="1" value="20"/><input id="effective-number" type="number" inputmode="numeric" min="5" max="20" step="1" value="20" aria-label={locale==='zh'?'整体速度数值':'Effective speed value'}/><span>WPM</span></div><p>{t.farnsworthHelp}</p></div>}
+<div class="setting"><label for="pitch">{t.pitch}</label><div class="range-row"><input type="range" id="pitch" min="300" max="1000" step="10" value="600"/><input id="pitch-number" type="number" inputmode="numeric" min="300" max="1000" step="10" value="600" aria-label={locale==='zh'?'音调数值':'Tone value'}/><span>Hz</span></div><p>{t.frequencyHelp}</p></div>
+</div></details>

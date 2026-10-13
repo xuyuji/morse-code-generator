@@ -1,0 +1,1 @@
+export function GET(){return new Response(import.meta.env.PUBLIC_SITE_ENV==='dev'?'User-agent: *\nDisallow: /\n':'User-agent: *\nAllow: /\n\nSitemap: https://dotsdashes.com/sitemap.xml\n',{headers:{'Content-Type':'text/plain; charset=utf-8'}});}

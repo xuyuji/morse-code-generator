@@ -1,0 +1,12 @@
+---
+import {MORSE} from '../core/morse';import {labels,type Locale} from '../content/site';import AudioSettings from './AudioSettings.astro';
+const {locale}=Astro.props as {locale:Locale};const t=labels[locale];
+const entries=Object.entries(MORSE).sort(([a],[b])=>{const group=(c:string)=>/[A-Z]/.test(c)?0:/[0-9]/.test(c)?1:2;return group(a)-group(b)||a.localeCompare(b);});
+---
+<section id="alphabet-tool" data-locale={locale} class="alphabet-tool" aria-label={t.alphabet}>
+<div class="alphabet-toolbar"><div class="search-field"><label for="character-search">{t.search}</label><input id="character-search" type="search" maxlength="20" placeholder={locale==='zh'?'例如 A、7、?':'Try A, 7 or ?'} autocomplete="off" spellcheck="false"/></div><div class="filters" role="group" aria-label={locale==='zh'?'字符类型':'Character type'}>{['all','letters','numbers','punctuation'].map((group)=><button class="chip" data-filter={group} aria-pressed={group==='all'}>{t[group as keyof typeof t]}</button>)}</div></div>
+<div class="alphabet-heading"><p>{t.listen}</p><button id="alphabet-stop" class="quiet" disabled>{t.stop}</button></div>
+<div class="alphabet-grid">{entries.map(([letter,code])=><button class="letter-card" data-character={letter} data-code={code} data-group={/[A-Z]/.test(letter)?'letters':/[0-9]/.test(letter)?'numbers':'punctuation'} aria-label={`${letter}: ${code.replaceAll('.' ,locale==='zh'?'点 ':'dot ').replaceAll('-',locale==='zh'?'划 ':'dash ')}`}><span>{letter}</span><code>{code}</code><span class="hear-icon" aria-hidden="true">↗</span></button>)}</div>
+<p id="no-matches" hidden>{t.noMatches}</p><p id="alphabet-status" role="status" class="status">{t.local}</p><AudioSettings locale={locale}/><noscript><p class="notice">{t.noscript}</p></noscript>
+</section>
+<script>import '../client/alphabet';</script>

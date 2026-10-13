@@ -1,0 +1,26 @@
+---
+import { labels,type Locale } from '../content/site';
+import AudioSettings from './AudioSettings.astro';
+const {locale,generator=false}=Astro.props as {locale:Locale;generator?:boolean}; const t=labels[locale];
+---
+<section class:list={['tool',{'generator-tool':generator}]} id="tool" data-tool={generator?'generator':'translator'} data-locale={locale} aria-label={locale==='zh'?'摩斯码工具':'Morse code tool'}>
+{!generator&&<div class="mode" role="group" aria-label={locale==='zh'?'转换方向':'Translation direction'}><button id="encode" aria-pressed="true" type="button">{t.encode}</button><button id="decode" aria-pressed="false" type="button">{t.decode}</button></div>}
+<noscript><p class="notice">{t.noscript}</p></noscript>
+<div class="tool-layout"><div class="workspace">
+<div class="editor">
+<div class="input-panel"><div class="field-top"><label for="message" id="input-label">{t.input}</label><div class="clear-actions"><button id="undo" class="quiet" hidden>{t.undo}</button><button id="clear" class="quiet" disabled>{t.clear}<span aria-hidden="true"> ×</span></button></div></div>
+<textarea id="message" rows="3" maxlength="2000" placeholder={t.placeholder} spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="input-hint errors" data-placeholder-text={t.placeholder} data-placeholder-morse={t.morsePlaceholder}></textarea>
+<div class="field-foot"><span id="input-hint" data-hint-text={t.hint} data-hint-morse={t.morseHint}>{t.hint}</span><span id="count">0 / 2000</span></div>
+<div id="morse-pad" class="pad" hidden aria-label={locale==='zh'?'点划辅助输入':'Morse input keypad'}><button data-insert=".">{locale==='zh'?'点 ·':'Dot ·'}</button><button data-insert="-">{locale==='zh'?'划 −':'Dash −'}</button><button data-insert=" ">{locale==='zh'?'字母间隔':'Letter gap'}</button><button data-insert=" / ">{locale==='zh'?'单词间隔':'Word gap'}</button><button id="backspace" aria-label={locale==='zh'?'退格':'Backspace'}>⌫</button></div>
+</div>
+<div class="output-panel"><div class="output-heading"><label id="output-label" for="result">{t.morse}</label><span id="result-state">{locale==='zh'?'等待输入':'Awaiting input'}</span></div><div id="result" role="region" tabindex="0" aria-labelledby="output-label" class="code-output empty" data-empty={t.empty}>{t.empty}</div><div class="duration-row" hidden={ !generator }><span>{t.duration}</span><output id="duration">0.0 {t.seconds}</output></div></div>
+</div>
+<p id="errors" class="error-message" role="status" hidden></p>
+<div class="actions"><button class="primary" id="play" disabled><span aria-hidden="true">▶</span> <span id="play-label">{t.play}</span></button><button class="secondary" id="copy" disabled><span aria-hidden="true">⧉</span> {t.copy}</button></div>
+<div class="playback-progress" role="progressbar" aria-label={t.progress} aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" hidden><div></div></div>
+<p class="status" id="status" role="status" aria-live="polite">{t.emptyStatus}</p>
+<div class="examples"><span>{t.try}</span>{['HELLO','SOS','I LOVE YOU'].map(example=><button class="chip" data-example={example}>{example}</button>)}</div>
+</div>
+<div class="parameters"><AudioSettings locale={locale} generator={generator}/>{generator&&<><button id="download" class="download" disabled><span aria-hidden="true">↓</span> {t.download}</button><p class="fine-print">{t.downloadHelp}</p></>}<p class="local-note"><span aria-hidden="true">◈</span> {t.local}</p></div>
+</div></section>
+<script>import '../client/converter';</script>
