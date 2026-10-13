@@ -1,6 +1,6 @@
 # 工程方案与初始化边界
 
-当前仓库包含Astro正式站、产品规格、研究资料和独立视觉原型；部署验证见docs/mvp-validation.md。用户已确认A视觉、dotsdashes.com域名和Cloudflare部署，后续建立正式页面，原型保留为评审材料。
+当前仓库包含Astro正式站、产品规格、研究资料和独立视觉原型；部署验证见docs/mvp-validation.md。用户已确认A视觉、dotsdashes.com域名和Cloudflare部署，已实现批0+批1正式页面，原型保留为评审材料。
 
 ## 推荐技术路线
 
@@ -15,12 +15,12 @@
 | core/morse | 标准映射、字符归一化、encode/decode、诊断和token | DOM、音频、埋点 |
 | core/timing | token → tone/silence，1/3/7时序与Farnsworth | 显示动画和浏览器计时器 |
 | audio | Web Audio实时播放，复用时序生成PCM/WAV | 外链音频或服务器转码 |
-| exports | 纯文本、WAV、自制SVG/打印材料 | 未经授权的竞品图片 |
+| exports | 当前复制纯文本与WAV；SVG/打印材料留待后续批次 | 未经授权的竞品图片 |
 | ui | 输入/结果、模式、状态、参数面板和辅助输入 | 另写第二套映射 |
 | content | 路由元数据、标准来源、说明、相关工具 | 未完成页面的预发布占位 |
-| analytics | 动作和匿名错误类别 | 输入、输出和文件内容 |
+| analytics（未接入） | 未来仅动作和匿名错误类别 | 输入、输出和文件内容 |
 
-转换返回 `{ output, tokens, diagnostics, lossy }`。diagnostics 包括输入位置与可操作的修复原因；核心纯函数只保证声明支持的字符。国际Morse先支持A–Z/0–9及逐项核对的标点；扩展字母、prosign、American Morse是不同规则，不暗中混入。
+当前转换接口返回 `{ output, morse, diagnostics, letters }`；有诊断时不提供可播放的morse串，阻止误用不完整结果。diagnostics 包括输入位置与可操作的修复原因；核心纯函数只保证声明支持的字符。国际Morse先支持A–Z/0–9及逐项核对的标点；扩展字母、prosign、American Morse是不同规则，不暗中混入。
 
 ## 性能和隐私
 
