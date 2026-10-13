@@ -28,3 +28,7 @@ GitHub Actions另行执行验证；Cloudflare自身构建也执行同样检查�
 Cloudflare Dashboard可查看各Worker的部署版本并恢复已验证版本；回滚后需修复分支代码，避免下一次推送重新带入问题。本项目没有数据库迁移或用户数据。
 
 首次连接记录与实际线上检查见 [MVP验收](mvp-validation.md)。配置说明不等于配置已验证，只有该记录中的实际结果才代表完成状态。
+
+## 公开信息边界
+
+网站仅展示contact@dotsdashes.com作为联系方式。环境校验记录保存在构建工作区的.build-info.json，不进入dist；历史公开build-info.json已移除，发布版本通过Cloudflare构建记录核验。

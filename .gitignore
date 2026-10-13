@@ -9,3 +9,5 @@ dist/
 .wrangler/
 .dev.vars*
 worker-configuration.d.ts
+
+.build-info.json

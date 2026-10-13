@@ -1,3 +1,4 @@
+export const CONTACT_EMAIL = 'contact@dotsdashes.com';
 export type Locale='en'|'zh';
 export type Tool='translator'|'alphabet'|'generator';
 export const paths:Record<Tool,string>={translator:'',alphabet:'morse-code-alphabet/',generator:'morse-code-generator/'};

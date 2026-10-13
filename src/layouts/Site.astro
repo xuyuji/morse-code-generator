@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import {labels,url,paths,type Locale,type Tool} from '../content/site';
+import {CONTACT_EMAIL,labels,url,paths,type Locale,type Tool} from '../content/site';
 interface Props {locale:Locale;title:string;description:string;path?:string;tool?:Tool;noindex?:boolean}
 const {locale,title,description,path='',tool,noindex=false}=Astro.props;
 const t=labels[locale],home=url(locale),canonical=new URL(url(locale,path),Astro.site).href;
@@ -27,7 +27,7 @@ const schema=tool?{'@context':'https://schema.org','@type':'WebApplication',name
 <div class="header-actions"><a class="language" href={url(locale==='en'?'zh':'en',path)} lang={locale==='en'?'zh-Hans':'en'} data-language-link>{t.language}</a><details class="menu"><summary aria-label={t.menu}><span aria-hidden="true">☰</span></summary><nav aria-label={t.nav}>{(Object.keys(paths) as Tool[]).map(key=><a href={url(locale,paths[key])}>{key==='translator'?t.home:t[key]}</a>)}<a href={url(locale,'about/')}>{t.about}</a></nav></details></div>
 </header>
 <main id="main" class="wrap"><slot/></main>
-<footer class="footer wrap"><a class="brand" href={home}><span class="brand-mark" aria-hidden="true">••−</span>dotsdashes.</a><span>{locale==='en'?'A little code. A clearer message.':'让点划，传递清楚的信息。'}</span><nav aria-label={locale==='zh'?'网站信息':'Site information'}><a href={url(locale,'about/')}>{t.about}</a><a href={url(locale,'privacy/')}>{t.privacy}</a><a href="https://github.com/xuyuji/morse-code-generator/issues">{t.feedback}</a></nav></footer>
+<footer class="footer wrap"><a class="brand" href={home}><span class="brand-mark" aria-hidden="true">••−</span>dotsdashes.</a><span>{locale==='en'?'A little code. A clearer message.':'让点划，传递清楚的信息。'}</span><nav aria-label={locale==='zh'?'网站信息':'Site information'}><a href={url(locale,'about/')}>{t.about}</a><a href={url(locale,'privacy/')}>{t.privacy}</a><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></nav></footer>
 <script>
  document.querySelectorAll<HTMLDetailsElement>('.menu').forEach(menu=>{document.addEventListener('click',event=>{if(!menu.contains(event.target as Node))menu.open=false;});document.addEventListener('keydown',event=>{if(event.key==='Escape'&&menu.open){menu.open=false;menu.querySelector('summary')?.focus();}});});
  // Confirm before navigation discards a message; never persist user input.
