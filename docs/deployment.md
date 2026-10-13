@@ -15,7 +15,7 @@ GitHub Actions另行执行验证；Cloudflare自身构建也执行同样检查�
 
 ## 域名与索引
 
-- 主域名使用HTTPS；Cloudflare区域设置开启Always Use HTTPS，www通过静态_redirects归一到主域名，保留路径。
+- 主域名使用HTTPS；Cloudflare区域设置开启Always Use HTTPS，www通过Cloudflare Redirect Rule归一到主域名，保留路径。
 - 静态HTML路径统一尾斜杠；不存在页面返回404，不使用SPA回退。
 - dev生成meta noindex、X-Robots-Tag noindex/nofollow/noarchive及robots Disallow，canonical指向生产。dev公开可访问，不作为私有内容存储。
 - 生产robots允许抓取，sitemap只有已实现的10个语言页面，不包含404或占位内页。
