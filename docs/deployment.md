@@ -9,7 +9,7 @@
 | dotsdashes | main | `npm run check && npm test && node scripts/build.mjs production && npm run check:build` | `npm run deploy:ci -- production` | dotsdashes.com；www跳转主域名 |
 | dotsdashes-dev | 非main分支 | `npm run check && npm test && node scripts/build.mjs dev && npm run check:build` | `npm run deploy:ci -- dev` | dev.dotsdashes.com |
 
-Workers Builds提供`WORKERS_CI_BRANCH`和`WORKERS_CI_COMMIT_SHA`。脚本拒绝非main部署生产，main触发dev时跳过部署。两个Worker必须独立连接仓库，不能在生产Worker的构建中越过CI名称检查部署dev Worker。dev的生产分支设为`dev`，预览分支启用其他非main分支，预览命令也使用`npm run deploy:ci -- dev`，使其真正更新共享dev域名。最近完成的成功部署覆盖共享dev，不是每分支独立域名。
+Workers Builds提供`WORKERS_CI_BRANCH`和`WORKERS_CI_COMMIT_SHA`。脚本拒绝非main部署生产，main触发dev时跳过部署。两个Worker必须独立连接仓库，不能在生产Worker的构建中越过CI名称检查部署dev Worker。dev的生产分支设为`dev`，启用非生产分支构建（当前控制台没有单独的分支排除输入），版本命令也使用`npm run deploy:ci -- dev`，使其真正更新共享dev域名；main即使触发构建，也会被部署脚本跳过。最近完成的成功部署覆盖共享dev，不是每分支独立域名。
 
 GitHub Actions另行执行验证；Cloudflare自身构建也执行同样检查，部署不依赖两套系统之间的执行先后。依赖版本与package-lock固定，公共npm registry在项目.npmrc中声明。
 

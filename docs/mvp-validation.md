@@ -15,7 +15,12 @@
 
 ## 上线检查
 
-正在配置。实际域名、HTTP跳转、生产/开发索引差异、GitHub推送触发结果待下方补充。
+- dotsdashes.com与dev.dotsdashes.com已绑定独立Workers，HTTPS证书有效。
+- HTTP主域名返回301到HTTPS；www的301保留路径和查询参数，归一到dotsdashes.com。
+- dev线上响应包含X-Robots-Tag: noindex, nofollow, noarchive。
+- codex/mvp推送22f2336触发Cloudflare自动构建并发布成功；dev的build-info.json返回完整对应commit。
+- 生产首页浏览器实际转换HELLO WORLD、复制成功提示、清空后Undo恢复均通过。
+- main生产自动发布：待最终推送验证后补充。
 
 ## 验证边界
 
