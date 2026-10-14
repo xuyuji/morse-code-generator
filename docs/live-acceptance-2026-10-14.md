@@ -33,8 +33,9 @@ Cloudflare在边缘注入性能统计beacon。现有隐私文案只描述应用�
 - PASS：正式浏览器首次访问没有Google标签；拒绝后刷新仍无Google标签。测试前无本站GA同意选择，当前测试选择为拒绝。
 - PASS：后台重新读取属性设置，GMT+08中国时间与USD正确；Google Signals未开启，广告个性化保存为0/307地区允许。
 - PASS：同意面板在约400px手机仿真下按钮可读、可操作、无横向溢出。12项测试及构建后脚本测试通过；后者补充了拒绝后重新允许应解除ga-disable的回归。
-- PENDING：点击“允许统计”被自动审批拒绝，理由为接入授权未明确涵盖代用户向Google发送这次浏览信息。已请求该次测试授权，未绕过拒绝；因此本轮未验证允许后的网络请求、Cookie实际行为和GA4后台收数，也没有宣称连接成功或真实流量增长。
-- PENDING：网络载荷实际抓包、真浏览器跨标签页撤回/允许后停止；目前只有构建脚本适配器测试。Clarity、录像遮罩/回放为N/A，本次没有接入。
+- PASS：用户随后明确授权测试数据传输。2026-10-14约12:15–12:17（Asia/Shanghai），正式Edge浏览器允许统计后加载一个对应Google标签；DotsDashes实时报告出现1位活跃用户、首页标题1次浏览，first_visit、page_view、session_start各1次。后台收数已验证；这些是验收测试数据，不代表自然流量增长。
+- PASS：测试后从Analytics preferences选择Reject analytics，页面自动重载；Google标签为0，再次手动刷新仍为0，同意面板保持关闭，撤回选择已持久化。
+- 未执行：网络载荷实际抓包、Cookie存储面板检查及真浏览器跨标签页撤回；这些边界目前只有构建脚本适配器测试。当前标签页撤回后的停止加载已真实验证。Clarity、录像遮罩/回放为N/A，本次没有接入。
 - PASS：接入后再跑首页移动PageSpeed：性能97、无障碍100、最佳实践100、SEO100；FCP/LCP1.6秒，TBT0ms、CLS0、SpeedIndex3.9秒。 [发布后报告](https://pagespeed.web.dev/analysis/https-dotsdashes-com/qbceq6e1m8?form_factor=mobile)
 
 ## 仍未验证与运营交接
@@ -46,3 +47,7 @@ Cloudflare在边缘注入性能统计beacon。现有隐私文案只描述应用�
 - GitHub保持公开，是用户明确的开源与推广实验；网站不展示个人仓库/账号，只公开contact@dotsdashes.com。
 
 参考：[Google consent](https://developers.google.com/tag-platform/security/guides/consent)、[GA4配置](https://developers.google.com/analytics/devguides/collection/ga4/reference/config)、[Cloudflare数据来源](https://developers.cloudflare.com/web-analytics/data-metrics/data-origin-and-collection/)。
+
+## Sitemap显示复核（同日）
+
+线上sitemap.xml返回HTTP200、application/xml。Python XML解析器成功解析标准urlset命名空间，10条唯一HTTPS生产URL及en/zh-Hans/x-default语言映射均正确，无dev地址。输出使用紧凑的单行XML，没有供人阅读的样式；浏览器显示挤在一起不构成XML格式错误，无需为此修改索引数据。Edge本轮打开XML被客户端拦截，未复现用户具体显示，但独立HTTP读取和解析通过。GSC实际处理状态仍由用户提交后检查。
