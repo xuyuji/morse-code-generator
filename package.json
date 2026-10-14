@@ -14,7 +14,7 @@
     "test": "node --import tsx --test tests/*.test.ts",
     "build:dev": "node scripts/build.mjs dev",
     "deploy:ci": "node scripts/deploy-ci.mjs",
-    "check:build": "node scripts/check-build.mjs"
+    "check:build": "node scripts/check-build.mjs && node scripts/check-analytics.mjs"
   },
   "engines": {
     "node": ">=22.12.0"

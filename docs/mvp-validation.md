@@ -25,7 +25,7 @@
 - 中文说明的N和斜杠编码改用括号包围，避免句号被误当作点划。
 - 移动端线上截图：[首页390px](design-previews/mvp-home-mobile.png)。
 
-Cloudflare生产构建：[866c73e0](https://dash.cloudflare.com/0e406706300366fa2eb2edb388905b46/workers/services/view/dotsdashes/production/builds/866c73e0-713e-48d2-8569-4694dcdf9264)。开发分支构建：[b5b875c9](https://dash.cloudflare.com/0e406706300366fa2eb2edb388905b46/workers/services/view/dotsdashes-dev/production/builds/b5b875c9-d100-4c1e-ab2d-0aff91935e28)。后续文案/交付记录提交仍通过相同流水线发布，可用build-info.json核对当前版本。
+Cloudflare生产构建：[866c73e0](https://dash.cloudflare.com/0e406706300366fa2eb2edb388905b46/workers/services/view/dotsdashes/production/builds/866c73e0-713e-48d2-8569-4694dcdf9264)。开发分支构建：[b5b875c9](https://dash.cloudflare.com/0e406706300366fa2eb2edb388905b46/workers/services/view/dotsdashes-dev/production/builds/b5b875c9-d100-4c1e-ab2d-0aff91935e28)。后续文案/交付记录提交仍通过相同流水线发布，版本改由Git/Cloudflare构建记录核对；公开build-info.json已在后续隐私修复中移除，线上应返回404。上述提交信息仅为历史记录。
 
 ## 验证边界
 

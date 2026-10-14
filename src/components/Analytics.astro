@@ -1,0 +1,67 @@
+---
+import {type Locale,url} from '../content/site';
+const {locale,enabled}=Astro.props as {locale:Locale;enabled:boolean};
+const zh=locale==='zh';
+---
+{enabled&&<div id="analytics-root" data-env={import.meta.env.PUBLIC_SITE_ENV} data-id="G-CKK50DSR0C">
+<button class="analytics-settings" id="analytics-settings" type="button">{zh?'统计偏好':'Analytics preferences'}</button>
+<aside id="analytics-consent" class="analytics-consent" aria-labelledby="analytics-heading" hidden>
+<strong id="analytics-heading">{zh?'帮助我们改进工具':'Help us improve the tools'}</strong>
+<p>{zh?'是否允许 Google Analytics 使用 Cookie 统计访问情况？不采集你的输入或转换结果。':'Allow Google Analytics cookies to measure visits? Your messages and results are never included.'} <a href={url(locale,'privacy/')}>{zh?'隐私说明':'Privacy details'}</a></p>
+<p id="analytics-withdraw-note" hidden>{zh?'更改后会刷新页面并清空当前输入。':'Changing this choice reloads the page and clears your current message.'}</p>
+<div class="analytics-actions"><button id="analytics-reject" type="button">{zh?'拒绝统计':'Reject analytics'}</button><button id="analytics-accept" type="button">{zh?'允许统计':'Allow analytics'}</button><button id="analytics-close" type="button" hidden>{zh?'关闭':'Close'}</button></div>
+<p id="analytics-status" role="status"></p>
+</aside></div>}
+<script>
+import {analyticsAllowed,CONSENT_KEY,readConsent,saveConsent,safeReferrer} from '../lib/analytics-consent';
+const root=document.querySelector<HTMLElement>('#analytics-root');
+if(root&&analyticsAllowed(root.dataset.env??'',location.hostname,location.pathname,!!document.querySelector('meta[name="robots"][content*="noindex"]'))){
+ const id=root.dataset.id!,panel=document.querySelector<HTMLElement>('#analytics-consent')!,settings=document.querySelector<HTMLButtonElement>('#analytics-settings')!,close=document.querySelector<HTMLButtonElement>('#analytics-close')!,note=document.querySelector<HTMLElement>('#analytics-withdraw-note')!,status=document.querySelector<HTMLElement>('#analytics-status')!;
+ const zh=document.documentElement.lang.startsWith('zh');
+ const w=window as typeof window&{dataLayer?:unknown[];gtag?:(...args:unknown[])=>void;[key:string]:unknown};
+ const store={getItem:(key:string)=>localStorage.getItem(key),setItem:(key:string,value:string)=>localStorage.setItem(key,value)};
+ let started=false;
+ const denied={analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'};
+ function show(open:boolean){panel.hidden=!open;document.body.classList.toggle('analytics-panel-open',open);close.hidden=readConsent(store)===null;note.hidden=!started;}
+ function start(){
+  if(started||readConsent(store)!=='granted')return;
+  started=true;w.dataLayer=w.dataLayer||[];
+  // gtag expects the arguments object, not a custom event containing tool data.
+  w.gtag=function(){w.dataLayer!.push(arguments);};
+  w.gtag('consent','default',denied);
+  w.gtag('consent','update',{...denied,analytics_storage:'granted'});
+  const safe={page_location:'https://dotsdashes.com'+location.pathname,page_title:document.title,page_referrer:safeReferrer(document.referrer)};
+  w.gtag('set',safe);
+  w.gtag('set',{ads_data_redaction:true,url_passthrough:false});
+  w.gtag('js',new Date());
+  w.gtag('config',id,{...safe,send_page_view:false,allow_google_signals:false,allow_ad_personalization_signals:false,cookie_expires:15552000,cookie_flags:'SameSite=Lax;Secure'});
+  w.gtag('event','page_view',safe);
+  const script=document.createElement('script');script.async=true;script.src='https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(id);script.referrerPolicy='no-referrer';document.head.append(script);
+ }
+ function stop(reload=true){
+  w['ga-disable-'+id]=true;
+  w.gtag?.('consent','update',denied);
+  // Clear only GA cookies controlled by this module, at the root path.
+  for(const item of document.cookie.split(';')){const name=item.trim().split('=')[0];if(name==='_ga'||name==='_ga_'+id.slice(2))for(const domain of ['',location.hostname,'.'+location.hostname])document.cookie=name+'=; Max-Age=0; Path=/; Secure; SameSite=Lax'+(domain?'; Domain='+domain:'');}
+  if(started&&reload)location.reload();
+ }
+ function choose(choice:'granted'|'denied'){
+  const saved=saveConsent(store,choice);
+  if(!saved){stop(false);status.textContent=zh?'无法保存偏好，统计保持关闭。':'Your preference could not be saved. Analytics stays off.';return;}
+  show(false);settings.focus();if(choice==='granted')start();else stop();
+ }
+ document.querySelector('#analytics-accept')!.addEventListener('click',()=>choose('granted'));
+ document.querySelector('#analytics-reject')!.addEventListener('click',()=>choose('denied'));
+ settings.addEventListener('click',()=>{show(true);document.querySelector<HTMLButtonElement>('#analytics-reject')!.focus();});
+ close.addEventListener('click',()=>{show(false);settings.focus();});
+ window.addEventListener('storage',event=>{if(event.key===CONSENT_KEY||event.key===null){if(readConsent(store)!=='granted')stop();show(readConsent(store)===null);}});
+ window.addEventListener('pageshow',()=>{if(readConsent(store)!=='granted')stop();});
+ const choice=readConsent(store);show(choice===null);if(choice==='granted')start();
+}
+</script>
+<style>
+.analytics-settings{display:block;margin:0 auto 24px;font:inherit;background:none;border:0;text-decoration:underline;cursor:pointer;min-height:44px;color:var(--muted)}
+.analytics-consent{position:fixed;z-index:20;bottom:calc(12px + env(safe-area-inset-bottom));left:12px;right:12px;max-width:600px;margin:auto;padding:16px;background:#fff;border:1px solid #ccd6d2;border-radius:14px;box-shadow:0 6px 32px #102b2424;color:#16382c;font-size:14px;line-height:1.5}
+.analytics-consent[hidden]{display:none}.analytics-consent p{margin:6px 0}.analytics-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.analytics-actions button{min-height:44px;padding:8px 14px;background:#f1f6f3;border:1px solid #8ba89a;border-radius:8px;color:#16382c;font:inherit;cursor:pointer}.analytics-consent a{color:inherit}.analytics-actions button:focus-visible,.analytics-settings:focus-visible{outline:3px solid #318767;outline-offset:3px}#analytics-status:empty{display:none}:global(body.analytics-panel-open){padding-bottom:240px}
+@media(max-height:500px){.analytics-consent{position:static;margin:16px}:global(body.analytics-panel-open){padding-bottom:0}}
+</style>
