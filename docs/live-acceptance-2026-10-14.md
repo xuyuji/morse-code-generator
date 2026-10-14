@@ -28,12 +28,19 @@ Cloudflare在边缘注入性能统计beacon。现有隐私文案只描述应用�
 - 统计page_location不带query/hash，referrer仅origin，标题为静态页面标题；每页单次手动page_view。
 - 可拒绝、从页脚重开偏好、撤回并清理本站控制的GA Cookie；跨标签页拒绝停止采集；存储失败不授予同意。
 - 构建后的实际脚本在最小DOM适配器中验证：未选择/拒绝零脚本、重复允许单次page_view、URL脱敏、撤回、跨页拒绝、存储失败、环境门控。此检查不等于真实网络抓包。
-- 正式发布、浏览器同意流程及GA后台收数：待本轮发布后追加。
+- PASS：生产功能提交3a0d335已通过Cloudflare自动构建并承接100%流量；线上统计bundle逐字节等于本地已验证产物。 [构建记录](https://dash.cloudflare.com/0e406706300366fa2eb2edb388905b46/workers/services/view/dotsdashes/production/builds/c58bc47d-e258-436e-aca9-a2acd300c43d)
+- PASS：发布后生产10页均包含同意组件；dev10页及两环境404均不启用组件，dev仍有noindex。
+- PASS：正式浏览器首次访问没有Google标签；拒绝后刷新仍无Google标签。测试前无本站GA同意选择，当前测试选择为拒绝。
+- PASS：后台重新读取属性设置，GMT+08中国时间与USD正确；Google Signals未开启，广告个性化保存为0/307地区允许。
+- PASS：同意面板在约400px手机仿真下按钮可读、可操作、无横向溢出。12项测试及构建后脚本测试通过；后者补充了拒绝后重新允许应解除ga-disable的回归。
+- PENDING：点击“允许统计”被自动审批拒绝，理由为接入授权未明确涵盖代用户向Google发送这次浏览信息。已请求该次测试授权，未绕过拒绝；因此本轮未验证允许后的网络请求、Cookie实际行为和GA4后台收数，也没有宣称连接成功或真实流量增长。
+- PENDING：网络载荷实际抓包、真浏览器跨标签页撤回/允许后停止；目前只有构建脚本适配器测试。Clarity、录像遮罩/回放为N/A，本次没有接入。
+- PASS：接入后再跑首页移动PageSpeed：性能97、无障碍100、最佳实践100、SEO100；FCP/LCP1.6秒，TBT0ms、CLS0、SpeedIndex3.9秒。 [发布后报告](https://pagespeed.web.dev/analysis/https-dotsdashes-com/qbceq6e1m8?form_factor=mobile)
 
 ## 仍未验证与运营交接
 
 - 未取得真实iOS Safari/Android Chrome软键盘、音频中断与文件保存验收；桌面尺寸模拟不能替代真机。
-- 新站无CrUX真实用户数据；Lighthouse分数不等于CWV现场合格或排名保证。PageSpeed报告为接入GA4前基线。
+- 新站无CrUX真实用户数据；Lighthouse分数不等于CWV现场合格或排名保证。已分别记录接入前基线和接入后的未同意状态实验室结果；尚未测量同意加载GA4后的性能。
 - GSC提交、实际收录、外链推广由用户执行。Sitemap为https://dotsdashes.com/sitemap.xml。
 - 等用户确认当前页面被GSC收录后，才进入二期；期间处理缺陷及统计验收，不新增工具页。
 - GitHub保持公开，是用户明确的开源与推广实验；网站不展示个人仓库/账号，只公开contact@dotsdashes.com。
