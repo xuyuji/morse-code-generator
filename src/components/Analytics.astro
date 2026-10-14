@@ -25,7 +25,7 @@ if(root&&analyticsAllowed(root.dataset.env??'',location.hostname,location.pathna
  function show(open:boolean){panel.hidden=!open;document.body.classList.toggle('analytics-panel-open',open);close.hidden=readConsent(store)===null;note.hidden=!started;}
  function start(){
   if(started||readConsent(store)!=='granted')return;
-  started=true;w.dataLayer=w.dataLayer||[];
+  started=true;w['ga-disable-'+id]=false;w.dataLayer=w.dataLayer||[];
   // gtag expects the arguments object, not a custom event containing tool data.
   w.gtag=function(){w.dataLayer!.push(arguments);};
   w.gtag('consent','default',denied);

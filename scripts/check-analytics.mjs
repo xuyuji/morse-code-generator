@@ -16,7 +16,7 @@ function page({choice=null,blocked=false,host='dotsdashes.com',env='production',
  return {scripts,cookies,nodes,window,click:id=>handlers[id+':click'](),storage:value=>{stored=value;handlers.storage({key:'dotsdashes.analytics.v1'});},get reloads(){return reloads;}};
 }
 let p=page();assert.equal(p.scripts.length,0);p.click('#analytics-reject');assert.equal(p.scripts.length,0);
-p=page({choice:'denied'});assert.equal(p.scripts.length,0);
+p=page({choice:'denied'});assert.equal(p.scripts.length,0);p.click('#analytics-reject');p.click('#analytics-accept');assert.equal(p.window['ga-disable-G-CKK50DSR0C'],false);assert.equal(p.scripts.length,1);
 p=page();p.click('#analytics-accept');p.click('#analytics-accept');assert.equal(p.scripts.length,1);
 const commands=p.window.dataLayer.map(item=>Array.from(item));assert.equal(commands.filter(item=>item[0]==='event'&&item[1]==='page_view').length,1);
 assert.ok(!JSON.stringify(commands).includes('secret'));assert.ok(commands.some(item=>item[0]==='config'&&item[2].send_page_view===false&&item[2].allow_google_signals===false));
