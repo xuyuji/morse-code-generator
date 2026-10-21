@@ -1,6 +1,6 @@
 # Numbers 二期预览验收
 
-范围：Numbers中英文页面和四类工具的关键操作统计；仅dev预览，等待用户验收。SOS/Chart未启动。
+范围：Numbers中英文页面和四类工具的关键操作统计；用户已通过dev预览，2026-10-21已合并main并自动部署生产。SOS/Chart未启动。
 
 ## 用户功能
 
@@ -36,7 +36,12 @@
 - PASS：构建后实际统计bundle的同意门控、白名单参数、拒绝/撤回、存储失败、dev零事件测试；不是网络抓包或GA4后台收数证据。
 - PASS：Edge本地预览验证007保留三位、复制成功、03/04保留斜杠编码、非法字母/emoji禁用整段播放和复制、非法输入时仍可独立试听0并停止、播放中编辑立即停止。
 - PASS：375px英文、375/430px中文尺寸模拟，无横向溢出；375英文输入顶部约304px，430中文约285px。控制台无错误。尺寸模拟不等于真机键盘或iOS验收。
-- PASS：分支推送后dev页面返回200，英文HTML与本地dev产物逐字节一致；远程浏览器确认007结果、noindex且没有统计组件。用户视觉验收待完成。
+- PASS：分支推送后dev页面返回200，英文HTML与本地dev产物逐字节一致；远程浏览器确认007结果、noindex且没有统计组件。用户视觉验收已通过。
 - PASS：首页SOS解码、Generator WAV生成提示、Alphabet搜索筛选回归。
-- PENDING：用户通过后生产发布，验证新操作事件真实GA4收数。dev明确禁用统计，不能为验收开启生产采集。
+- PASS：main快进到8c7a015并推送，Cloudflare生产自动构建部署完成；正式中英文Numbers均200，线上脚本/CSS与本地生产构建逐字节一致。
+- PASS：正式页canonical/hreflang、可索引状态、12 URL sitemap XML、robots、HTTP及www到主域名HTTPS的301跳转；首页/Alphabet/Generator资源回归；dev保持noindex。
+- PASS：正式站007复制内容为 `----- ----- --...`；整段播放、逐位试听正常；非法字母/emoji禁用复制和播放；中文03/04保留顺序和斜杠。375px模拟文档宽度和滚动宽度均360px，无横向溢出。
+- PASS：GA4实时后台测试前0活跃，测试后1活跃；观察到tool_copy_success、tool_audio_start、tool_reference_play各1条以及page_view。仅证明这些事件实际收到，不代表错误分支/WAV/停止事件全部线上验证。本次是验收测试流量，不计作自然增长。
+- PASS：测试后通过页面撤回统计同意；撤回自动刷新和再次刷新后Google脚本均为0。
+- PENDING：新Numbers页面GSC收录，由用户提交并后续观察；未将已有六页收录等同于新页收录。
 - PENDING：iOS Safari/Android Chrome真机键盘、声音和复制体验。
