@@ -13,7 +13,7 @@ function page({choice=null,blocked=false,host='dotsdashes.com',env='production',
  const window={addEventListener:(event,fn)=>handlers[event]=fn};
  const localStorage={getItem:()=>{if(blocked)throw Error('blocked');return stored;},setItem:(_key,value)=>{if(blocked)throw Error('blocked');stored=value;}};
  vm.runInNewContext(code,{document,window,location,localStorage,URL,Date,encodeURIComponent});
- return {scripts,cookies,nodes,window,click:id=>handlers[id+':click'](),storage:value=>{stored=value;handlers.storage({key:'dotsdashes.analytics.v1'});},get reloads(){return reloads;}};
+ return {scripts,cookies,nodes,window,action:detail=>handlers['dotsdashes:action']?.({detail}),click:id=>handlers[id+':click'](),storage:value=>{stored=value;handlers.storage({key:'dotsdashes.analytics.v1'});},get reloads(){return reloads;}};
 }
 let p=page();assert.equal(p.scripts.length,0);p.click('#analytics-reject');assert.equal(p.scripts.length,0);
 p=page({choice:'denied'});assert.equal(p.scripts.length,0);p.click('#analytics-reject');p.click('#analytics-accept');assert.equal(p.window['ga-disable-G-CKK50DSR0C'],false);assert.equal(p.scripts.length,1);
@@ -25,3 +25,12 @@ p=page({choice:'granted'});p.storage('denied');assert.equal(p.reloads,1);
 p=page({blocked:true});p.click('#analytics-accept');assert.equal(p.scripts.length,0);assert.match(p.nodes['#analytics-status'].textContent,/统计保持关闭/);
 for(const options of [{host:'dev.dotsdashes.com',choice:'granted'},{env:'dev',choice:'granted'},{path:'/private/',choice:'granted'}])assert.equal(page(options).scripts.length,0);
 console.log('Shipped analytics: consent, one page_view, URL sanitization, withdrawal, cross-tab rejection and environment gates passed.');
+
+p=page();p.action({tool:'numbers',action:'copy_success',language:'en'});assert.equal(p.window.dataLayer,undefined);
+p.click('#analytics-accept');p.action({tool:'numbers',action:'copy_success',language:'en',input:'PRIVATE_DATE',output:'PRIVATE_RESULT'});
+let actions=p.window.dataLayer.map(item=>Array.from(item)).filter(item=>item[0]==='event'&&typeof item[1]==='string'&&item[1].startsWith('tool_'));assert.equal(actions.length,1);assert.equal(JSON.stringify(actions[0][2]),JSON.stringify({tool:'numbers',action:'copy_success',language:'en'}));
+p.action({tool:'numbers',action:'PRIVATE_DATE',language:'en'});p.click('#analytics-reject');p.action({tool:'numbers',action:'copy_success',language:'en'});
+assert.equal(p.window.dataLayer.map(item=>Array.from(item)).filter(item=>item[0]==='event'&&typeof item[1]==='string'&&item[1].startsWith('tool_')).length,1);
+assert.ok(!JSON.stringify(p.window.dataLayer).includes('PRIVATE_'));
+for(const options of [{env:'dev'},{host:'dev.dotsdashes.com'}]){const blockedPage=page({...options,choice:'granted'});blockedPage.action({tool:'numbers',action:'copy_success',language:'en'});assert.equal(blockedPage.window.dataLayer,undefined);}
+console.log('Action events: allowlisted parameters, no pre-consent replay, withdrawn and dev events blocked.');

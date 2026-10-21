@@ -16,3 +16,10 @@ test('referrers never retain paths, credentials, queries or fragments',()=>{
  assert.equal(safeReferrer('https://name:secret@example.com/private?q=message#secret'),'https://example.com/');
  assert.equal(safeReferrer('javascript:alert(1)'),'');assert.equal(safeReferrer(''),'');
 });
+
+import {safeToolEvent} from '../src/lib/analytics-events';
+test('action schema drops arbitrary content and rejects unknown actions',()=>{
+ assert.deepEqual(safeToolEvent({tool:'numbers',action:'copy_success',language:'zh',input:'PRIVATE_DATE',output:'PRIVATE_RESULT',url:'secret',error:'secret'}),{tool:'numbers',action:'copy_success',language:'zh'});
+ for(const value of [null,'secret',{tool:'numbers',action:'PRIVATE_INPUT',language:'en'},{tool:'secret',action:'copy_success',language:'en'}])assert.equal(safeToolEvent(value),null);
+ assert.equal(analyticsAllowed('production','dotsdashes.com','/zh/morse-code-numbers/',false),true);
+});

@@ -11,5 +11,5 @@ export function safeReferrer(value:string):string {
   try {const u=new URL(value);return ['https:','http:'].includes(u.protocol)?u.origin+'/':'';} catch{return '';}
 }
 export function analyticsAllowed(env:string,host:string,path:string,noindex:boolean):boolean {
-  return env==='production'&&host==='dotsdashes.com'&&!noindex&&/^\/(?:zh\/)?(?:(?:morse-code-alphabet|morse-code-generator|about|privacy)\/)?$/.test(path);
+  return env==='production'&&host==='dotsdashes.com'&&!noindex&&/^\/(?:zh\/)?(?:(?:morse-code-alphabet|morse-code-generator|morse-code-numbers|about|privacy)\/)?$/.test(path);
 }

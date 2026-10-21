@@ -14,6 +14,7 @@ const zh=locale==='zh';
 </aside></div>}
 <script>
 import {analyticsAllowed,CONSENT_KEY,readConsent,saveConsent,safeReferrer} from '../lib/analytics-consent';
+import {safeToolEvent} from '../lib/analytics-events';
 const root=document.querySelector<HTMLElement>('#analytics-root');
 if(root&&analyticsAllowed(root.dataset.env??'',location.hostname,location.pathname,!!document.querySelector('meta[name="robots"][content*="noindex"]'))){
  const id=root.dataset.id!,panel=document.querySelector<HTMLElement>('#analytics-consent')!,settings=document.querySelector<HTMLButtonElement>('#analytics-settings')!,close=document.querySelector<HTMLButtonElement>('#analytics-close')!,note=document.querySelector<HTMLElement>('#analytics-withdraw-note')!,status=document.querySelector<HTMLElement>('#analytics-status')!;
@@ -56,6 +57,10 @@ if(root&&analyticsAllowed(root.dataset.env??'',location.hostname,location.pathna
  close.addEventListener('click',()=>{show(false);settings.focus();});
  window.addEventListener('storage',event=>{if(event.key===CONSENT_KEY||event.key===null){if(readConsent(store)!=='granted')stop();show(readConsent(store)===null);}});
  window.addEventListener('pageshow',()=>{if(readConsent(store)!=='granted')stop();});
+ window.addEventListener('dotsdashes:action',event=>{
+  if(!started||readConsent(store)!=='granted'||w['ga-disable-'+id])return;
+  const safe=safeToolEvent((event as CustomEvent).detail);if(safe)w.gtag?.('event','tool_'+safe.action,safe);
+ });
  const choice=readConsent(store);show(choice===null);if(choice==='granted')start();
 }
 </script>
